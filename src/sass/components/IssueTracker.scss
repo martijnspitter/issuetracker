@@ -1,0 +1,200 @@
+.it-container {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	width: 100%;
+	height: 100vh;
+}
+
+.it-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	top: 0;
+	width: 100%;
+	height: 7vh;
+
+	background-color: $color-grey-light-3;
+	border-bottom: 1px solid $color-grey-dark-2;
+
+	&__logo {
+		height: 4rem;
+		width: 4rem;
+		margin-left: 1rem;
+	}
+
+	&__title {
+		font-size: 3rem;
+		font-weight: 300;
+	}
+
+	&__login {
+		font-size: 1.6rem;
+		margin-right: 1rem;
+	}
+}
+
+.it-content {
+	display: flex;
+}
+
+.it-navbar {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+
+	width: 16%;
+	height: 93vh;
+	background-color: $color-grey-light-3;
+
+	text-align: center;
+
+	&__list {
+		margin-top: 4rem;
+		list-style: none;
+		width: 100%;
+	}
+
+	&__item {
+		margin: 1rem;
+
+		border-radius: 3px;
+	}
+
+	&__link {
+		//width: 90%;
+	}
+}
+
+.btn {
+	&,
+	&:link,
+	&:visited {
+		text-transform: uppercase;
+		text-decoration: none;
+
+		display: inline-block;
+		border-radius: 3px;
+		transition: all .2s;
+		position: relative;
+		font-size: 1.6rem;
+		width: 100%;
+		border: none;
+		cursor: pointer;
+	}
+	&--white {
+		background-color: $color-grey-light-1;
+		color: $color-grey-dark-3;
+		padding: 1.5rem 4rem;
+		&::after {
+			background-color: $color-grey-light-1;
+		}
+	}
+	&--green {
+		background-color: $color-primary;
+		color: $color-grey-light-1;
+		&::after {
+			background-color: $color-primary;
+		}
+	}
+
+	&:hover {
+		transform: translateY(-3px); /* y axis goes top down so to move up we use negative values */
+		//box-shadow: $shadow-big-blur;
+		&::after {
+			/* so now we specifiy the onHover on the after virtual element which is behind the btn element. And on hover we want it to do something */
+			//transform: scaleX(1.4) scaleY(1.6); /* here we make it bigger. To actually animate it we need to use transition on the initial state so in this case btn::after. */
+			opacity: 0;
+			/* so on hover we want the end state to be invisible. Transition sets that to happen in .4 seconds. */
+		}
+	}
+
+	&:active,
+	&:focus {
+		//we place the focus here to give it the same style as active when focussed for accesability and remove the outline
+		outline: none;
+		/* active is the click state of in this case the button (so acts like an onClick in React) */
+		transform: translateY(-1px);
+		box-shadow: $shadow-big-blur; /* box-shadow adds shadow on the x and y axis. then the third value is the amount of blur and the last is the color */
+	}
+	&::after {
+		/* pseudo class after adds an virtual element after the element we use it on (note the dubble ::) */
+		content: ""; /* we have to specify content even if its empty */
+		display: inline-block; /* we also have to specify this */
+		height: 100%;
+		width: 100%; /* height and width to 100% makes the virtual element exactly the same sice as the element its based on */
+		border-radius: 10rem;
+		position: absolute; /* position relative to the btn element so add position: relative to parent element */
+		top: 0;
+		left: 0;
+		z-index: -1; /* this actually places it behind the btn elemement */
+		transition: all .4s; /* we want all the things happening in .4seconds that we declare in the btn:hover::after state */
+	}
+	&--animated {
+		animation: moveInBottom .5s ease-out .75s; /* last value sets the delay */
+		animation-fill-mode: backwards; /* this will automaticly apply the 0% states to the button when it starts. So the button will be invisible till the animation runs */
+	}
+}
+
+.material-icons {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 6rem; /* Preferred icon size */
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
+	color: $color-grey-dark-2;
+	margin-bottom: 4rem;
+
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+
+	/* Support for IE. */
+	font-feature-settings: 'liga';
+}
+
+.it-issuelist {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+
+	background-color: $color-grey-light-1;
+}
+
+.legend {
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	grid-template-columns: 10% 10% 30% 10% 10% 30%;
+
+	height: 4rem;
+	width: 95%;
+
+	font-size: 1.4rem;
+
+	&__label {
+		justify-self: center;
+	}
+
+	&__button {
+		justify-self: center;
+	}
+
+	&__severity {
+		margin-left: 1rem;
+	}
+}

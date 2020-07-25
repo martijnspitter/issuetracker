@@ -1,0 +1,107 @@
+.popupai {
+	height: 100vh;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: rgba($charcoal, .9);
+	z-index: 10000;
+	overflow-y: scroll;
+
+	&__content {
+		width: 60%;
+		height: auto;
+		background-color: $color-grey-light-1;
+		box-shadow: $shadow-light;
+		@include center-hoz-vert;
+		border-radius: 3px;
+		overflow-y: scroll;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		align-items: center;
+		overflow: hidden;
+		flex-wrap: wrap;
+		padding: 4rem 0;
+
+		transition: all .5s .2s; //adding a delay here
+	}
+
+	&__close {
+		&:link,
+		&:visited {
+			color: $color-grey-dark-3;
+			position: absolute;
+			top: 2.5rem;
+			right: 2.5rem;
+			font-size: 3rem;
+			text-decoration: none;
+			display: inline-block;
+			transition: all .2s;
+			line-height: 0;
+		}
+		&:hover {
+			color: $color-primary;
+		}
+	}
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 90%;
+	padding-top: 4rem;
+	font-size: 1.6rem;
+
+	&__group:not(:last-child) {
+		margin-bottom: 2rem;
+		display: flex;
+		flex-direction: column;
+		width: 90%;
+	}
+	&__control {
+		font-family: inherit;
+		font-size: 1.5rem;
+		color: inherit;
+		padding: 1.5rem 2rem;
+		border-radius: 3px;
+		background-color: rgb(232, 240, 254);
+		box-shadow: 0 1rem 1rem rgba(0, 0, 0, .05);
+		border: none;
+		border-bottom: 3px solid transparent; //we add a transparant border here so that there is no jumping when focussed.
+		width: 100%;
+		transition: all .3s;
+
+		&::-webkit-input-placeholder {
+			color: var(--color-grey-dark-2);
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: $shadow-light;
+			border-bottom: 3px solid $color-primary;
+			&:invalid {
+				border-bottom: 3px solid $orange;
+			}
+		}
+	}
+
+	&__label {
+		font-family: inherit;
+		font-size: 1.3rem;
+		font-weight: 700;
+		color: inherit;
+		margin-left: 2rem;
+		margin-top: .7rem;
+		display: block;
+		transition: all .3s;
+		transform: translateY(-8rem);
+	}
+
+	&__input:placeholder-shown + &__label {
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-4rem);
+	}
+}

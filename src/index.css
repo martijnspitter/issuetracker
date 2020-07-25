@@ -1,13 +1,341 @@
-body {
+*,
+*::after,
+*::before {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  padding: 0;
+  box-sizing: inherit; }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+html {
+  font-size: 62.5%; }
+
+body {
+  box-sizing: border-box; }
+
+body {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #333; }
+
+.popupai {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(47, 72, 88, 0.9);
+  z-index: 10000;
+  overflow-y: scroll; }
+  .popupai__content {
+    width: 60%;
+    height: auto;
+    background-color: #faf9f9;
+    box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.06);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 3px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+    flex-wrap: wrap;
+    padding: 4rem 0;
+    transition: all .5s .2s; }
+  .popupai__close:link, .popupai__close:visited {
+    color: #999;
+    position: absolute;
+    top: 2.5rem;
+    right: 2.5rem;
+    font-size: 3rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all .2s;
+    line-height: 0; }
+  .popupai__close:hover {
+    color: #5789db; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  padding-top: 4rem;
+  font-size: 1.6rem; }
+  .form__group:not(:last-child) {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    width: 90%; }
+  .form__control {
+    font-family: inherit;
+    font-size: 1.5rem;
+    color: inherit;
+    padding: 1.5rem 2rem;
+    border-radius: 3px;
+    background-color: #e8f0fe;
+    box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.05);
+    border: none;
+    border-bottom: 3px solid transparent;
+    width: 100%;
+    transition: all .3s; }
+    .form__control::-webkit-input-placeholder {
+      color: var(--color-grey-dark-2); }
+    .form__control:focus {
+      outline: none;
+      box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.06);
+      border-bottom: 3px solid #5789db; }
+      .form__control:focus:invalid {
+        border-bottom: 3px solid #f26419ff; }
+  .form__label {
+    font-family: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: inherit;
+    margin-left: 2rem;
+    margin-top: .7rem;
+    display: block;
+    transition: all .3s;
+    transform: translateY(-8rem); }
+  .form__input:placeholder-shown + .form__label {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4rem); }
+
+.it-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100vh; }
+
+.it-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+  width: 100%;
+  height: 7vh;
+  background-color: #f0eeee;
+  border-bottom: 1px solid #777; }
+  .it-header__logo {
+    height: 4rem;
+    width: 4rem;
+    margin-left: 1rem; }
+  .it-header__title {
+    font-size: 3rem;
+    font-weight: 300; }
+  .it-header__login {
+    font-size: 1.6rem;
+    margin-right: 1rem; }
+
+.it-content {
+  display: flex; }
+
+.it-navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 16%;
+  height: 93vh;
+  background-color: #f0eeee;
+  text-align: center; }
+  .it-navbar__list {
+    margin-top: 4rem;
+    list-style: none;
+    width: 100%; }
+  .it-navbar__item {
+    margin: 1rem;
+    border-radius: 3px; }
+
+.btn, .btn:link, .btn:visited {
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 3px;
+  transition: all .2s;
+  position: relative;
+  font-size: 1.6rem;
+  width: 100%;
+  border: none;
+  cursor: pointer; }
+
+.btn--white {
+  background-color: #faf9f9;
+  color: #999;
+  padding: 1.5rem 4rem; }
+  .btn--white::after {
+    background-color: #faf9f9; }
+
+.btn--green {
+  background-color: #5789db;
+  color: #faf9f9; }
+  .btn--green::after {
+    background-color: #5789db; }
+
+.btn:hover {
+  transform: translateY(-3px);
+  /* y axis goes top down so to move up we use negative values */ }
+  .btn:hover::after {
+    /* so now we specifiy the onHover on the after virtual element which is behind the btn element. And on hover we want it to do something */
+    opacity: 0;
+    /* so on hover we want the end state to be invisible. Transition sets that to happen in .4 seconds. */ }
+
+.btn:active, .btn:focus {
+  outline: none;
+  /* active is the click state of in this case the button (so acts like an onClick in React) */
+  transform: translateY(-1px);
+  box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.3);
+  /* box-shadow adds shadow on the x and y axis. then the third value is the amount of blur and the last is the color */ }
+
+.btn::after {
+  /* pseudo class after adds an virtual element after the element we use it on (note the dubble ::) */
+  content: "";
+  /* we have to specify content even if its empty */
+  display: inline-block;
+  /* we also have to specify this */
+  height: 100%;
+  width: 100%;
+  /* height and width to 100% makes the virtual element exactly the same sice as the element its based on */
+  border-radius: 10rem;
+  position: absolute;
+  /* position relative to the btn element so add position: relative to parent element */
+  top: 0;
+  left: 0;
+  z-index: -1;
+  /* this actually places it behind the btn elemement */
+  transition: all .4s;
+  /* we want all the things happening in .4seconds that we declare in the btn:hover::after state */ }
+
+.btn--animated {
+  animation: moveInBottom .5s ease-out .75s;
+  /* last value sets the delay */
+  animation-fill-mode: backwards;
+  /* this will automaticly apply the 0% states to the button when it starts. So the button will be invisible till the animation runs */ }
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 6rem;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  color: #777;
+  margin-bottom: 4rem;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga'; }
+
+.it-issuelist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #faf9f9; }
+
+.legend {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 10% 10% 30% 10% 10% 30%;
+  height: 4rem;
+  width: 95%;
+  font-size: 1.4rem; }
+  .legend__label {
+    justify-self: center; }
+  .legend__button {
+    justify-self: center; }
+  .legend__severity {
+    margin-left: 1rem; }
+
+.issuelist-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
+.issue-container {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 10% 10% 30% 10% 10% 30%;
+  min-height: 4rem;
+  height: auto;
+  width: 95%;
+  margin-bottom: .5rem;
+  border-radius: 3px;
+  background-color: #f0eeee;
+  font-size: 1.6rem; }
+
+.issue__label {
+  justify-self: center;
+  padding: 0 2rem;
+  background-color: #f6ae2dff;
+  border-radius: 5px;
+  text-transform: uppercase; }
+
+.issue__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around; }
+
+.issue__description {
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis; }
+  .issue__description:hover {
+    white-space: normal;
+    cursor: pointer;
+    overflow: visible; }
+
+.issue__buttons {
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto auto auto; }
+
+.issue__severity {
+  text-transform: uppercase;
+  color: #e3170a;
+  margin-left: 1rem; }
+
+.issue__title {
+  font-size: 1.6rem; }
+
+.button, .button:link, .button:visited {
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+  transition: all .2s;
+  position: relative;
+  font-size: 1.6rem;
+  width: 100%;
+  border: none;
+  cursor: pointer; }
+
+.button--blue {
+  background-color: #00e8fc;
+  padding: 0rem 1.5rem; }
+
+.button--orange {
+  background-color: #fd6710;
+  padding: 0rem 1.5rem; }
+
+.button--red {
+  background-color: #e3170a;
+  padding: 0rem 1.5rem; }
