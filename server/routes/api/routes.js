@@ -46,6 +46,15 @@ router.get('/projects', (req, res) => {
 	});
 });
 
+//get selected project
+router.get('/project/:owner', (req, res) => {
+	const sql = 'SELECT * FROM project ORDER BY id desc';
+	const query = db.query(sql, (err, result) => {
+		if (err) throw err;
+		res.send(result);
+	});
+});
+
 // create issue
 router.post('/addissue', (req, res) => {
 	const issue = {
@@ -64,7 +73,7 @@ router.post('/addissue', (req, res) => {
 	const sql = 'INSERT INTO issues SET ?';
 	const query = db.query(sql, issue, (err, result) => {
 		if (err) throw err;
-		res.send('Issue added to database..');
+		res.send(result);
 	});
 });
 
@@ -107,6 +116,26 @@ router.post('/adduser', (req, res) => {
 	});
 });
 
+// create selected project
+router.post('/addselectedproject', (req, res) => {
+	const project = {
+		title: req.body.title,
+		description: req.body.description,
+		github: req.body.github,
+		owner: req.body.owner,
+		id: req.body.id
+	};
+
+	if (!project.title || !project.description || !project.github || !project.owner) {
+		return res.status(400).json({ msg: 'Missing fields' });
+	}
+	const sql = 'INSERT INTO project SET ?';
+	const query = db.query(sql, project, (err, result) => {
+		if (err) throw err;
+		res.send('Project added to database..');
+	});
+});
+
 // update user
 router.put('/users/:id', (req, res) => {
 	const id = req.params.id;
@@ -139,6 +168,35 @@ router.put('/users/:id', (req, res) => {
 
 // update project
 router.put('/projects/:id', (req, res) => {
+	const id = req.params.id;
+	const project = {
+		title: req.body.title,
+		description: req.body.description,
+		github: req.body.github,
+		owner: req.body.owner
+	};
+
+	const sql = `UPDATE projects SET ? WHERE id = ${id}`;
+	const found = `SELECT id FROM projects WHERE id = ? LIMIT 1`;
+
+	const query = db.query(found, id, (err, result) => {
+		if (err) {
+			throw err;
+		} else {
+			if (!result[0]) {
+				res.status(404).json({ msg: `No project with the id of ${req.params.id} found` });
+			} else {
+				db.query(sql, project, (err, result) => {
+					if (err) throw err;
+					else res.send('project updated to database..');
+				});
+			}
+		}
+	});
+});
+
+// update selected project
+router.put('/project/:id', (req, res) => {
 	const id = req.params.id;
 	const project = {
 		title: req.body.title,

@@ -263,6 +263,12 @@ body {
   .legend__severity {
     margin-left: 1rem; }
 
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
 .issuelist-container {
   width: 100%;
   display: flex;

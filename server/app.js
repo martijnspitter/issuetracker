@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const cors = require('cors');
 
 // create connection
 const db = mysql.createConnection({
@@ -20,6 +21,7 @@ db.connect((err) => {
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 // routes setup base-url
 app.use('/api/issuetracker', require('./routes/api/routes'));
