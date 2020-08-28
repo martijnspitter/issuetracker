@@ -46,18 +46,19 @@
 	}
 }
 
-.form {
+.ownform {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 90%;
+	width: 100%;
 	padding-top: 4rem;
 	font-size: 1.6rem;
 
-	&__group:not(:last-child) {
+	&__group {
 		margin-bottom: 2rem;
 		display: flex;
 		flex-direction: column;
+
 		width: 90%;
 	}
 	&__control {
@@ -72,6 +73,7 @@
 		border-bottom: 3px solid transparent; //we add a transparant border here so that there is no jumping when focussed.
 		width: 100%;
 		transition: all .3s;
+		align-items: center;
 
 		&::-webkit-input-placeholder {
 			color: var(--color-grey-dark-2);

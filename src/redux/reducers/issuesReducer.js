@@ -8,7 +8,7 @@ export default (state = {}, action) => {
 		case FETCH_ISSUE:
 			return { ...state, [action.payload.id]: action.payload };
 		case FETCH_ISSUES:
-			return { ...state, ..._.mapKeys(action.payload, 'id') };
+			return { ..._.mapKeys(action.payload, 'id') };
 		case EDIT_ISSUE:
 			return { ...state, [action.payload.id]: action.payload };
 		case DELETE_ISSUE:

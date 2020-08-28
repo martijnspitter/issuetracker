@@ -1,20 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react';
+import { Modal } from 'react-bootstrap';
 
-const Modal = (props) => {
-	return ReactDOM.createPortal(
-		<div onClick={props.onDismiss} className="modal">
-			<div onClick={(e) => e.stopPropagation()} className="modal__content">
-				<a href="#it-issuelist" className="popupai__close" onClick={props.onDismiss}>
-					&times;
-				</a>
-				<div className="modal__header">{props.title}</div>
-				<div className="modal__input">{props.input}</div>
-				<div className="modal__actions">{props.actions}</div>
-			</div>
-		</div>,
-		document.querySelector('#modal')
-	);
+import { connect } from 'react-redux';
+
+class Modal extends Component {
+	render() {
+		return (
+			<Modal
+				show={this.props.show}
+				onHide={this.props.onHide}
+				size="lg"
+				aria-labelledby="contained-modal-title-vcenter"
+				centered
+			>
+				<Modal.Header closeButton>
+					<Modal.Title id="contained-modal-title-vcenter">{this.props.title}</Modal.Title>
+				</Modal.Header>
+				{this.props.content()}
+				<Modal.Footer />
+			</Modal>
+		);
+	}
+}
+
+const mapStateToProps = (state) => {
+	return {
+		auth: state.auth,
+		selectedProject: Object.values(state.selectedProject),
+		users: state.users
+	};
 };
 
-export default Modal;
+export default connect(mapStateToProps, { createProject })(Modal);

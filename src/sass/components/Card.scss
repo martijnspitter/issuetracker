@@ -1,0 +1,111 @@
+.card-footer {
+	display: flex;
+	justify-content: center;
+}
+
+.project {
+	&__description {
+		margin-bottom: 1rem;
+	}
+
+	&__link {
+		margin-top: 2rem;
+	}
+}
+
+.card {
+	margin-bottom: 4rem;
+
+	&__description {
+		margin-bottom: 1.5rem;
+	}
+
+	&__title {
+		margin-bottom: 1rem;
+	}
+
+	&__status {
+		text-align: center;
+		width: 20rem;
+		font-weight: 600 !important;
+	}
+
+	&__severity {
+		width: 20rem;
+		text-align: center;
+		font-weight: 600 !important;
+	}
+
+	&__assignedto {
+		width: 20rem;
+		text-align: center;
+	}
+
+	&__details {
+		font-size: 1.2rem;
+	}
+}
+
+.btn {
+	width: 17rem;
+
+	font-size: 1.2rem !important;
+	font-weight: 600 !important;
+
+	&__submit {
+		align-self: center;
+		margin-top: 1.5rem;
+	}
+}
+
+.card-header {
+	display: flex;
+	justify-content: space-between;
+	align-content: space-around;
+	background-color: rgba(0, 0, 0, .125) !important;
+}
+
+.card-body {
+	background-color: rgba(0, 0, 0, .03) !important;
+}
+
+.container {
+	margin-top: 4rem;
+}
+
+.navbar-brand {
+	align-self: center;
+	padding-right: 1rem;
+}
+
+.navbar-nav {
+	flex-direction: row !important;
+	width: 30%;
+}
+
+.nav-item:not(:last-child) {
+	padding-right: .9rem;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+}
+
+.right {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.modal-body {
+	padding: 2rem !important;
+}
+
+.modal-footer {
+	justify-content: space-evenly !important;
+}
+
+.col {
+	display: flex;
+	justify-content: center;
+}

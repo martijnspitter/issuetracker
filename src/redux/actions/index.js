@@ -2,46 +2,109 @@ import {
 	SIGN_IN,
 	SIGN_OUT,
 	CREATE_ISSUE,
-	FETCH_ISSUE,
 	FETCH_ISSUES,
 	EDIT_ISSUE,
 	DELETE_ISSUE,
 	FETCH_PROJECTS,
-	SELECTED_PROJECT
+	SELECTED_PROJECT,
+	SELECTED_ISSUE,
+	CREATE_PROJECT,
+	DELETE_PROJECT,
+	EDIT_PROJECT,
+	FETCH_USERS,
+	FETCH_PROJECTUSERS,
+	DELETE_PROJECTUSER,
+	ADD_PROJECTUSER,
+	CLOSE_ADDPROJECT,
+	SET_ADDPROJECT,
+	EDIT_COMMENT,
+	DELETE_COMMENT,
+	CREATE_COMMENT
 } from './types';
 import history from '../../history';
 import axios from '../../api/axios';
+import authHeader from './authHeader';
 
-export const signIn = (userId) => {
-	return {
+// AUTH
+export const signIn = (username, password) => async (dispatch) => {
+	const response = await axios.post('/auth/signin', { username, password });
+
+	if (response.data.accessToken) {
+		localStorage.setItem('user', JSON.stringify(response.data));
+	}
+	dispatch({
 		type: SIGN_IN,
-		payload: userId
-	};
+		payload: response.data
+	});
 };
 
 export const signOut = () => {
+	localStorage.removeItem('user');
 	return {
 		type: SIGN_OUT
 	};
 };
 
-export const createIssue = (formValues) => async (dispatch) => {
-	// after implementing login:
-	//const owner = getState().auth.userID;
-	//formValues.owner = owner;
-	const response = await axios.post('/addissue', formValues);
+export const registerUser = (username, email, password) => async () => {
+	return await axios.post('/auth/signup', { username, email, password });
+};
 
-	formValues.id = response.data.insertId;
-	console.log(formValues);
+// USERS
+export const getCurrentUser = () => async (dispatch) => {
+	const user = await JSON.parse(localStorage.getItem('user'));
+
+	if (user) {
+		dispatch({
+			type: SIGN_IN,
+			payload: user
+		});
+	}
+
+	return user;
+};
+
+export const fetchAllUsers = () => async (dispatch) => {
+	const response = await axios.get('/user/usernames/names', { headers: authHeader() });
 
 	dispatch({
-		type: CREATE_ISSUE,
-		payload: formValues
+		type: FETCH_USERS,
+		payload: response.data
 	});
 };
 
-export const fetchIssues = () => async (dispatch) => {
-	const response = await axios.get('/issues');
+// PROJECT USERS
+export const fetchProjectUsers = (projectId) => async (dispatch) => {
+	const response = await axios.get(`/user/projectusers/${projectId}`, { headers: authHeader() });
+
+	dispatch({
+		type: FETCH_PROJECTUSERS,
+		payload: response.data
+	});
+};
+
+export const addProjectUsers = (projectId, users) => async () => {
+	await axios.post(`/user/projectusers/add/${projectId}`, users, { headers: authHeader() });
+};
+
+export const deleteProjectUsers = (projectId, users) => async () => {
+	await axios.post(`/user/projectusers/delete/${projectId}`, users, { headers: authHeader() });
+};
+
+// ISSUES
+export const createIssue = (issue) => async (dispatch) => {
+	const response = await axios.post('/issues/create', issue, { headers: authHeader() });
+
+	// adding comments to response because render comments in Issues.js needs an empty array
+	response.data.comments = [];
+
+	dispatch({
+		type: CREATE_ISSUE,
+		payload: response.data
+	});
+};
+
+export const getIssues = (projectId) => async (dispatch) => {
+	const response = await axios.get(`projects/select/${projectId}`, { headers: authHeader() });
 
 	dispatch({
 		type: FETCH_ISSUES,
@@ -50,7 +113,7 @@ export const fetchIssues = () => async (dispatch) => {
 };
 
 export const deleteIssue = (id) => async (dispatch) => {
-	await axios.delete(`/issue/delete/${id}`);
+	await axios.delete(`/issues/delete/${id}`, { headers: authHeader() });
 
 	dispatch({
 		type: DELETE_ISSUE,
@@ -59,7 +122,7 @@ export const deleteIssue = (id) => async (dispatch) => {
 };
 
 export const editIssue = (id, issue) => async (dispatch) => {
-	await axios.put(`/issues/${id}`, issue);
+	await axios.put(`/issues/update/${id}`, issue, { headers: authHeader() });
 
 	dispatch({
 		type: EDIT_ISSUE,
@@ -67,8 +130,37 @@ export const editIssue = (id, issue) => async (dispatch) => {
 	});
 };
 
-export const fetchProjects = () => async (dispatch) => {
-	const response = await axios.get('/projects');
+// COMMENTS
+export const deleteComment = (id) => async (dispatch) => {
+	await axios.delete(`/issues/comments/delete/${id}`, { headers: authHeader() });
+
+	// dispatch({
+	// 	type: DELETE_COMMENT,
+	// 	payload: id
+	// });
+};
+
+export const editComment = (id, comment) => async (dispatch) => {
+	await axios.put(`/issues/comments/update/${id}`, comment, { headers: authHeader() });
+
+	// dispatch({
+	// 	type: EDIT_COMMENT,
+	// 	payload: comment
+	// });
+};
+
+export const createComment = (comment) => async (dispatch) => {
+	const response = await axios.post('/issues/comments/create', comment, { headers: authHeader() });
+
+	// dispatch({
+	// 	type: CREATE_COMMENT,
+	// 	payload: response.data
+	// });
+};
+
+// PROJECTS
+export const fetchProjects = (id) => async (dispatch) => {
+	const response = await axios.get(`/projects/${id}`, { headers: authHeader() });
 
 	dispatch({
 		type: FETCH_PROJECTS,
@@ -76,67 +168,66 @@ export const fetchProjects = () => async (dispatch) => {
 	});
 };
 
-export const selectedProject = (owner) => async (dispatch) => {
-	const response = await axios.get(`/project/${owner}`);
+export const deleteProject = (id) => async (dispatch) => {
+	await axios.delete(`/projects/delete/${id}`, { headers: authHeader() });
 
 	dispatch({
-		type: SELECTED_PROJECT,
+		type: DELETE_PROJECT,
+		payload: id
+	});
+};
+
+export const editProject = (id, project) => async (dispatch) => {
+	await axios.put(`/projects/update/${id}`, project, { headers: authHeader() });
+
+	dispatch({
+		type: EDIT_PROJECT,
+		payload: project
+	});
+};
+
+export const createProject = (project) => async (dispatch) => {
+	const response = await axios.post(`/projects/create`, project, { headers: authHeader() });
+
+	const projectId = response.data.id;
+	const projectUsers = await axios.get(`/user/projectusers/${projectId}`, { headers: authHeader() });
+
+	dispatch({
+		type: FETCH_PROJECTUSERS,
+		payload: projectUsers.data
+	});
+	dispatch({
+		type: CREATE_PROJECT,
 		payload: response.data
 	});
 };
 
-export const selectProject = (id, project) => async (dispatch) => {
-	const response = await axios.put(`/project/${id}`, project);
-
+// SELECTED PROJECT & ISSUE
+export const selectedProject = (project) => (dispatch) => {
 	dispatch({
 		type: SELECTED_PROJECT,
 		payload: project
 	});
 };
 
-export const createSelectedProject = (project) => async (dispatch) => {
-	const response = await axios.post(`/addselectedproject`, project);
-
+export const selectedIssue = (issue) => (dispatch) => {
 	dispatch({
-		type: SELECTED_PROJECT,
-		payload: project
+		type: SELECTED_ISSUE,
+		payload: issue
 	});
 };
 
-// export const createStream = (formValues) => async (dispatch, getState) => {
-// 	const { userId } = getState().auth;
-// 	const response = await streams.post('/streams', { ...formValues, userId });
+// ADDPROJECT
+export const setAddProject = (set) => (dispatch) => {
+	dispatch({
+		type: SET_ADDPROJECT,
+		payload: set
+	});
+};
 
-// 	dispatch({
-// 		type: CREATE_STREAM,
-// 		payload: response.data
-// 	});
-
-// 	// programtic navigation upon submit back to streamlist
-// 	// difficult to get acces to the history of the routerbrowser since we are not in a component and routerbrowser has control over the history object
-// 	// we are gonna create the history object so we have control and can easaly import it
-// 	// so now we switch to a plain Router instead of BrowserRouter en use our own history file on that
-
-// 	history.push('/');
-
-// 	//the push is how we navigate the user around. the path is as usual a string
-// };
-
-// export const fetchStream = (id) => async (dispatch) => {
-// 	const response = await streams.get(`/streams/${id}`);
-
-// 	dispatch({
-// 		type: FETCH_STREAM,
-// 		payload: response.data
-// 	});
-// };
-
-// export const editStream = (id, formValues) => async (dispatch) => {
-// 	const response = await streams.patch(`/streams/${id}`, formValues);
-// 	//put updates all record. Patch only updates some records.
-// 	dispatch({
-// 		type: EDIT_STREAM,
-// 		payload: response.data
-// 	});
-// 	history.push('/');
-// };
+export const closeAddProject = (set) => (dispatch) => {
+	dispatch({
+		type: CLOSE_ADDPROJECT,
+		payload: set
+	});
+};

@@ -1,9 +1,10 @@
 import { SIGN_IN, SIGN_OUT } from '../actions/types';
 
 const INTIAL_STATE = {
-	isSignedIn: null,
+	isSignedIn: false,
 	userId: null,
-	userName: null
+	userName: null,
+	accessToken: null
 };
 
 export default (state = INTIAL_STATE, action) => {
@@ -12,11 +13,12 @@ export default (state = INTIAL_STATE, action) => {
 			return {
 				...state,
 				isSignedIn: true,
-				userId: action.payload,
-				userName: window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getGivenName()
+				userId: action.payload.id,
+				userName: action.payload.username,
+				accessToken: action.payload.accessToken
 			};
 		case SIGN_OUT:
-			return { ...state, isSignedIn: false, userId: null, userName: null };
+			return { ...state, isSignedIn: false, userId: null, userName: null, actionToken: null };
 		default:
 			return state;
 	}

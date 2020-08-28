@@ -25,6 +25,7 @@ app.use(cors());
 
 // routes setup base-url
 app.use('/api/issuetracker', require('./routes/api/routes'));
+app.use('/api/issuetracker/user', require('./routes/api/auth'));
 
 // create database
 app.get('/createdb', (req, res) => {

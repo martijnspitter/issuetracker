@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch, Redirect, Link } from 'react-router-dom';
 import history from '../history';
 import { createSelectedProject } from '../redux/actions';
 import Projects from './Projects';
@@ -59,7 +59,9 @@ class IssueTracker extends Component {
 					<header className="it-header">
 						<img src={logo} className="it-header__logo" alt="logo" />
 						<h1 className="it-header__title">Issue Tracker</h1>
-						<p className="it-header__login">dummy login</p>
+						<Link to="/issuetracker/login" className="it-header__login btn--white">
+							LOGIN
+						</Link>
 					</header>
 					<div className="it-content">
 						<div className="it-navbar">
@@ -93,10 +95,10 @@ class IssueTracker extends Component {
 							</div>
 						</div>
 						<div className="it-issuelist" id="it-issuelist">
-							<div className="selectedProject">
-								<div className="selected-project__name">Selected Project: </div>
-							</div>
 							<Switch>
+								<Route path="/" exact>
+									<Redirect to="/issuetracker/" />
+								</Route>
 								<Route path="/issuetracker/" exact component={Welcome} />
 								<Route path="/issuetracker/login" exact component={Login} />
 								<Route path="/issuetracker/register" exact component={Register} />
