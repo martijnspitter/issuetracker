@@ -28,6 +28,7 @@ class App extends Component {
 						renderTitle={this.props.navbar.title}
 						renderAddIssue={this.props.navbar.addIssue}
 						renderIssueList={this.props.navbar.issueList}
+						renderLogin={this.props.navbar.login}
 					/>
 					<div className="container mt-3">
 						<Switch>

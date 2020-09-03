@@ -31,7 +31,7 @@ class Projects extends Component {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		this.props.fetchAllUsers();
 	}
 
@@ -42,7 +42,8 @@ class Projects extends Component {
 			addProject: false,
 			addIssue: true,
 			issueList: false,
-			title: project.title
+			title: project.title,
+			login: true
 		});
 		// go to issuelist
 		this.props.history.push('/issuetracker/issuelist');
@@ -69,114 +70,114 @@ class Projects extends Component {
 	}
 
 	renderProject() {
-		return this.props.projects.map((project) => {
-			return (
-				<ProjectRender
-					key={project.id}
-					title={project.title}
-					description={project.description}
-					github={this.props.github}
-					renderOptions={this.renderOptions(project)}
-					users={this.projectUsers(project.id, project.owner)}
-				/>
-			);
-		});
+		if (this.props.projects[0].id) {
+			return this.props.projects.map((project) => {
+				return (
+					<ProjectRender
+						key={project.id}
+						title={project.title}
+						description={project.description}
+						github={project.github}
+						renderOptions={this.renderOptions(project)}
+						users={this.projectUsers(project.id, project.owner)}
+					/>
+				);
+			});
+		}
 	}
 
 	projectUsers(id, owner) {
-		return this.props.projectUsers[id].users.map((user) => {
-			if (user.id === owner) {
-				const ownerOverlay = (
-					<Popover id="popover-basic">
-						<Popover.Content>Project creator</Popover.Content>
-					</Popover>
-				);
-				return (
-					<OverlayTrigger key={user.id} placement="top" overlay={ownerOverlay}>
-						<ListGroup.Item variant="info" style={{ marginRight: '1rem' }}>
+		if (this.props.projectUsers[id].users) {
+			return this.props.projectUsers[id].users.map((user) => {
+				if (user.id === owner) {
+					const ownerOverlay = (
+						<Popover id="popover-basic">
+							<Popover.Content>Project creator</Popover.Content>
+						</Popover>
+					);
+					return (
+						<OverlayTrigger key={user.id} placement="top" overlay={ownerOverlay}>
+							<ListGroup.Item variant="info">
+								{getName(user.id, this.props.projectUsers[id].users, this.props.auth.userName)}
+							</ListGroup.Item>
+						</OverlayTrigger>
+					);
+				} else
+					return (
+						<ListGroup.Item key={user.id}>
 							{getName(user.id, this.props.projectUsers[id].users, this.props.auth.userName)}
 						</ListGroup.Item>
-					</OverlayTrigger>
-				);
-			} else
-				return (
-					<ListGroup.Item key={user.id}>
-						{getName(user.id, this.props.projectUsers[id].users, this.props.auth.userName)}
-					</ListGroup.Item>
-				);
-		});
+					);
+			});
+		}
 	}
 
 	renderOptions(project) {
 		if (this.props.auth.userId === project.owner) {
 			return (
 				<Card.Footer>
-					<Container style={{ marginTop: 0 }}>
-						<Row>
-							<Col>
-								<Button variant="success" className="btn" onClick={() => this.select(project)}>
-									Select Project
-								</Button>
-							</Col>
-							<Col>
-								<Button
-									onClick={() => {
-										this.setState({ editProject: true });
-										this.props.selectProject(project);
-									}}
-								>
-									Edit Project Details
-								</Button>
-							</Col>
-							<Col>
-								<Button
-									onClick={() =>
-										this.setState({ addProjectUsersShow: true, projectId: project.id, projectTitle: project.title })}
-								>
-									Add Users to Project
-								</Button>
-							</Col>
-							<Col>
-								<Button
-									variant="warning"
-									onClick={() => {
-										this.setState({ deleteProjectUsersShow: true, projectId: project.id, projectTitle: project.title });
-										// set selected project in redux
-										this.props.selectProject(project);
-									}}
-								>
-									Remove users from project
-								</Button>
-							</Col>
-							<Col>
-								<Button
-									variant="danger"
-									onClick={() =>
-										this.setState({ deleteProject: true, projectId: project.id, projectTitle: project.title })}
-								>
-									Delete Project
-								</Button>
-							</Col>
-						</Row>
-					</Container>
+					<Row>
+						<Col>
+							<Button variant="success" className="btn" onClick={() => this.select(project)}>
+								Select Project
+							</Button>
+						</Col>
+						<Col>
+							<Button
+								onClick={() => {
+									this.setState({ editProject: true });
+									this.props.selectProject(project);
+								}}
+							>
+								Edit Details
+							</Button>
+						</Col>
+						<Col>
+							<Button
+								onClick={() =>
+									this.setState({ addProjectUsersShow: true, projectId: project.id, projectTitle: project.title })}
+							>
+								Add Users
+							</Button>
+						</Col>
+						<Col>
+							<Button
+								variant="warning"
+								onClick={() => {
+									this.setState({ deleteProjectUsersShow: true, projectId: project.id, projectTitle: project.title });
+									// set selected project in redux
+									this.props.selectProject(project);
+								}}
+							>
+								Remove Users
+							</Button>
+						</Col>
+						<Col>
+							<Button
+								variant="danger"
+								onClick={() =>
+									this.setState({ deleteProject: true, projectId: project.id, projectTitle: project.title })}
+							>
+								Delete Project
+							</Button>
+						</Col>
+					</Row>
 				</Card.Footer>
 			);
 		} else {
 			return (
 				<Card.Footer>
-					<Container style={{ marginTop: 0 }}>
-						<Row>
-							<Col>
-								<Button variant="success" className="btn" onClick={() => this.select(project)}>
-									Select Project
-								</Button>
-							</Col>
-							<Col />
-							<Col />
-							<Col />
-							<Col />
-						</Row>
-					</Container>
+					<Row>
+						<Col>
+							<Button variant="success" className="btn" onClick={() => this.select(project)}>
+								Select Project
+							</Button>
+						</Col>
+						<Col />
+						<Col />
+						<Col />
+						<Col />
+					</Row>
 				</Card.Footer>
 			);
 		}
@@ -184,7 +185,7 @@ class Projects extends Component {
 
 	render() {
 		return (
-			<Container style={{ width: '100%' }}>
+			<Container style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 				{this.renderProject()}
 
 				<EditProject show={this.state.editProject} onHide={this.closeEditProject} />

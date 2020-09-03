@@ -5,11 +5,13 @@ import history from '../history';
 import { Card, Container, Button } from 'react-bootstrap';
 
 class Profile extends Component {
-	async componentDidMount() {
-		await this.props.fetchProjects(this.props.auth.userId);
-		this.props.projects.map((project) => {
-			return this.props.fetchProjectUsers(project.id);
-		});
+	componentDidMount() {
+		// adding delay to wait for data from projects fetch in login component
+		setTimeout(() => {
+			this.props.projects.map((project) => {
+				return this.props.fetchProjectUsers(project.id);
+			});
+		}, 500);
 	}
 
 	numberOfProjects() {
@@ -29,16 +31,12 @@ class Profile extends Component {
 	}
 
 	numberofIssues() {
-		console.log(this.props.projects);
-
 		var issues = this.props.projects.map((project) => project.issues);
-		console.log(issues);
+
 		var issuesLength = issues.map((arr) => {
-			console.log(arr.length);
 			return arr.length;
 		});
 		var count = issuesLength.reduce((a, b) => a + b, 0);
-		console.log(count);
 
 		if (count === 1) {
 			return (
@@ -74,12 +72,15 @@ class Profile extends Component {
 	}
 
 	navProjects() {
-		this.props.setNavbar({ addProject: true, addIssue: false, issueList: false, title: false });
+		this.props.projects.map((project) => {
+			return this.props.fetchProjectUsers(project.id);
+		});
+		this.props.setNavbar({ addProject: true, addIssue: false, issueList: false, title: false, login: true });
 		history.push('/issuetracker/projects');
 	}
 
 	navDocumentation() {
-		this.props.setNavbar({ addProject: false, addIssue: false, issueList: false, title: false });
+		this.props.setNavbar({ addProject: false, addIssue: false, issueList: false, title: false, login: true });
 		history.push('/issuetracker/documentation');
 	}
 
@@ -91,10 +92,7 @@ class Profile extends Component {
 
 					<Card.Body>
 						{this.renderProjects()}
-						<div style={{ display: 'flex', marginTop: '2rem' }}>
-							That is including the Project belonging to this IssueTracker application. <br /> For more info visit the
-							documentation.
-						</div>
+
 						{this.numberOfProjects()}
 						<div style={{ marginTop: '4rem' }}>Better start cracking!</div>
 					</Card.Body>
@@ -112,7 +110,7 @@ const mapStateToProps = (state) => {
 	return {
 		auth: state.auth,
 		projects: Object.values(state.projects),
-		issueCount: state.issueCount
+		projectUsers: Object.values(state.projectUsers)
 	};
 };
 

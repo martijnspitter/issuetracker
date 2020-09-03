@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import AddIssue from './issues/AddIssue';
 import AddProject from './Projects/AddProject';
 
+import logo from '../images/logo.svg';
+
 import { signOut, getCurrentUser, setNavbar, removeIssues } from '../redux/actions';
 
 class Navbar extends Component {
@@ -35,6 +37,10 @@ class Navbar extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.logOut();
+	}
+
 	logOut() {
 		this.props.signOut();
 		this.setState({
@@ -51,21 +57,30 @@ class Navbar extends Component {
 			addProject: true,
 			addIssue: false,
 			issueList: false,
-			title: false
+			title: false,
+			login: true
 		});
 		this.props.removeIssues({});
 	}
 
 	render() {
-		const { currentUser } = this.state;
+		const currentUser = this.props.renderLogin;
 		const newProject = this.props.renderAddProject;
 		const newIssue = this.props.renderAddIssue;
 		const projectTitle = this.props.renderTitle;
 		const issueList = this.props.renderIssueList;
 
 		return (
-			<nav className="navbar navbar-dark bg-dark">
+			<nav className="navbar navbar-dark bg-dark" style={{ width: '100%', alignItems: 'center' }}>
 				<div className="navbar-nav">
+					<Link to={'/'} style={{ display: 'flex', alignItems: 'center' }}>
+						<img
+							src={logo}
+							alt="martijnspitter.nl logo"
+							className="cvlogo"
+							style={{ width: '3rem', height: '3rem', marginRight: '1rem' }}
+						/>
+					</Link>
 					<Link
 						to={'/issuetracker/documentation'}
 						className="navbar-brand"
@@ -74,7 +89,8 @@ class Navbar extends Component {
 								addProject: false,
 								addIssue: false,
 								issueList: false,
-								title: false
+								title: false,
+								login: true
 							})}
 					>
 						IssueTracker
@@ -111,7 +127,8 @@ class Navbar extends Component {
 										addProject: false,
 										addIssue: true,
 										issueList: true,
-										title: false
+										title: false,
+										login: true
 									})}
 							>
 								IssueList
@@ -152,10 +169,11 @@ class Navbar extends Component {
 										addProject: false,
 										addIssue: false,
 										issueList: false,
-										title: false
+										title: false,
+										login: true
 									})}
 							>
-								{currentUser.username}
+								{this.props.auth.userName}
 							</Link>
 						</li>
 						<li className="nav-item">
@@ -186,7 +204,7 @@ class Navbar extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		navbar: state.navbar
+		auth: state.auth
 	};
 };
 

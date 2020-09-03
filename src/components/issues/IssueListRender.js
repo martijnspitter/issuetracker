@@ -15,7 +15,8 @@ class IssueListRender extends Component {
 			addProject: false,
 			addIssue: true,
 			issueList: true,
-			title: this.props.selectedProject.title
+			title: this.props.selectedProject.title,
+			login: true
 		});
 	}
 

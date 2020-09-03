@@ -4,7 +4,7 @@ import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import CheckButton from 'react-validation/build/button';
 
-import { signIn } from '../redux/actions/index.js';
+import { signIn, fetchProjects, setNavbar, fetchProjectUsers } from '../redux/actions/index.js';
 import { connect } from 'react-redux';
 
 import { Card, Container } from 'react-bootstrap';
@@ -58,21 +58,33 @@ class Login extends Component {
 		this.form.validateAll();
 
 		if (this.checkBtn.context._errors.length === 0) {
-			this.props.signIn(this.state.username, this.state.password).then(
-				() => {
-					this.props.history.push('/issuetracker/profile');
-					window.location.reload();
-				},
-				(error) => {
-					const resMessage =
-						(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+			this.props
+				.signIn(this.state.username, this.state.password)
+				.then(
+					() => {
+						this.props.fetchProjects(this.props.auth.userId);
+					},
+					(error) => {
+						const resMessage =
+							(error.response && error.response.data && error.response.data.message) ||
+							error.message ||
+							error.toString();
 
-					this.setState({
-						loading: false,
-						message: resMessage
+						this.setState({
+							loading: false,
+							message: resMessage
+						});
+					}
+				)
+				.then(() => {
+					this.props.projects.map((project) => {
+						return this.props.fetchProjectUsers(project.id);
 					});
-				}
-			);
+				})
+				.then(() => {
+					this.props.setNavbar({ addProject: false, addIssue: false, issueList: false, title: false, login: true });
+					this.props.history.push('/issuetracker/profile');
+				});
 		} else {
 			this.setState({
 				loading: false
@@ -116,8 +128,8 @@ class Login extends Component {
 							/>
 						</div>
 
-						<div className="form-group">
-							<button className="btn btn-primary btn-block" disabled={this.state.loading}>
+						<div className="form-group" style={{ display: 'flex', justifyContent: 'center' }}>
+							<button className="btn btn-primary" disabled={this.state.loading}>
 								{this.state.loading && <span className="spinner-border spinner-border-sm" />}
 								<span>Login</span>
 							</button>
@@ -143,4 +155,11 @@ class Login extends Component {
 	}
 }
 
-export default connect(null, { signIn })(Login);
+const mapStateToProps = (state) => {
+	return {
+		auth: state.auth,
+		projects: Object.values(state.projects)
+	};
+};
+
+export default connect(mapStateToProps, { signIn, fetchProjects, setNavbar, fetchProjectUsers })(Login);

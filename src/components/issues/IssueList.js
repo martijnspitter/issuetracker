@@ -23,7 +23,7 @@ class IssueList extends Component {
 		this.sortOrder(this.state.order);
 		this.interval = setInterval(async () => {
 			await this.props.getIssues(this.props.selectedProject.id);
-			console.log('refresh');
+
 			this.sortOrder(this.state.order);
 		}, 300000);
 	}

@@ -8,7 +8,7 @@ import { isEmail } from 'validator';
 
 import { registerUser } from '../redux/actions';
 
-import { Card, Container } from 'react-bootstrap';
+import { Card, Container, Alert, Button } from 'react-bootstrap';
 import avatar from '../images/avatar.jpg';
 
 const required = (value) => {
@@ -64,7 +64,8 @@ class Register extends Component {
 			email: '',
 			password: '',
 			successful: false,
-			message: ''
+			message: '',
+			show: true
 		};
 	}
 
@@ -119,7 +120,20 @@ class Register extends Component {
 
 	render() {
 		return (
-			<Container style={{ display: 'flex', justifyContent: 'center' }}>
+			<Container style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+				<Alert variant="danger" show={this.state.show}>
+					<Alert.Heading>WARNING!</Alert.Heading>
+					<p>
+						This is a proof-of-concept application. It does <strong>NOT</strong> have a <strong>SECURE</strong>{' '}
+						connection. Use an <strong>UNIQUE</strong> password!
+					</p>
+					<div className="d-flex justify-content-end">
+						<Button onClick={() => this.setState({ show: false })} variant="outline-danger">
+							I UNDERSTAND
+						</Button>
+					</div>
+				</Alert>
+
 				<Card style={{ width: '30%' }}>
 					<Card.Img src={avatar} alt="profile-img" />
 					<Form

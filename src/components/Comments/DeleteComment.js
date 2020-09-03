@@ -26,9 +26,9 @@ class DeleteComment extends Component {
 					<Modal.Header closeButton>
 						<Modal.Title id="contained-modal-title-vcenter">Delete Comment</Modal.Title>
 					</Modal.Header>
-					<Modal.Body>
+					<Modal.Body style={{ fontSize: '1.6rem' }}>
 						<div>Are you sure you want to delete </div>
-						<strong>{this.props.comment}</strong>
+						<em>'{this.props.comment}'</em>
 					</Modal.Body>
 
 					<Modal.Footer>
