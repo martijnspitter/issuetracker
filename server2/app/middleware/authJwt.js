@@ -24,60 +24,72 @@ const verifyToken = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-	Users.findByPk(req.userId).then((user) => {
-		user.getRoles().then((roles) => {
-			for (let i = 0; i < roles.length; i++) {
-				if (roles[i].name === 'admin') {
-					next();
-					return;
+	Users.findByPk(req.userId)
+		.then((user) => {
+			user.getRoles().then((roles) => {
+				for (let i = 0; i < roles.length; i++) {
+					if (roles[i].name === 'admin') {
+						next();
+						return;
+					}
 				}
-			}
 
-			res.status(403).send({
-				message: 'Require Admin Role!'
+				res.status(403).send({
+					message: 'Require Admin Role!'
+				});
+				return;
 			});
-			return;
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
 		});
-	});
 };
 
 const isModerator = (req, res, next) => {
-	Users.findByPk(req.userId).then((user) => {
-		user.getRoles().then((roles) => {
-			for (let i = 0; i < roles.length; i++) {
-				if (roles[i].name === 'moderator') {
-					next();
-					return;
+	Users.findByPk(req.userId)
+		.then((user) => {
+			user.getRoles().then((roles) => {
+				for (let i = 0; i < roles.length; i++) {
+					if (roles[i].name === 'moderator') {
+						next();
+						return;
+					}
 				}
-			}
 
-			res.status(403).send({
-				message: 'Require Moderator Role!'
+				res.status(403).send({
+					message: 'Require Moderator Role!'
+				});
 			});
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
 		});
-	});
 };
 
 const isModeratorOrAdmin = (req, res, next) => {
-	Users.findByPk(req.userId).then((user) => {
-		user.getRoles().then((roles) => {
-			for (let i = 0; i < roles.length; i++) {
-				if (roles[i].name === 'moderator') {
-					next();
-					return;
+	Users.findByPk(req.userId)
+		.then((user) => {
+			user.getRoles().then((roles) => {
+				for (let i = 0; i < roles.length; i++) {
+					if (roles[i].name === 'moderator') {
+						next();
+						return;
+					}
+
+					if (roles[i].name === 'admin') {
+						next();
+						return;
+					}
 				}
 
-				if (roles[i].name === 'admin') {
-					next();
-					return;
-				}
-			}
-
-			res.status(403).send({
-				message: 'Require Moderator or Admin Role!'
+				res.status(403).send({
+					message: 'Require Moderator or Admin Role!'
+				});
 			});
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
 		});
-	});
 };
 
 const authJwt = {

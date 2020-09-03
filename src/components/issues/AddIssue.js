@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import history from '../../history';
+
 import { createIssue, getIssues } from '../../redux/actions/index';
 import { Modal, Form, Button } from 'react-bootstrap';
-import Select from 'react-select';
 
 class AddIssue extends Component {
 	constructor(props) {
@@ -16,30 +17,30 @@ class AddIssue extends Component {
 		};
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
 		const body = {
 			status: 'Open',
-			project: this.props.selectedProject[0].id,
-			owner: this.props.auth.userId,
-			assignedto: this.state.selectedOption.id
+			projectId: this.props.selectedProject.id,
+			owner: this.props.auth.userId
 		};
 		formData.forEach((value, property) => (body[property] = value));
+		body.assignedto = parseInt(body.assignedto, 10);
 
-		this.props.createIssue(body);
+		await this.props.createIssue(body);
 
-		//this.props.getIssues(this.props.selectedProject[0].id);
-
+		await this.props.getIssues(this.props.selectedProject.id);
+		history.push('/issuetracker/issuelist');
 		this.props.onHide();
 	}
 
 	getusers = () => {
-		if (!this.props.selectedProject[0]) {
+		if (!this.props.selectedProject.id) {
 			return {};
 		} else {
-			const project = this.props.selectedProject[0].id;
+			const project = this.props.selectedProject.id;
 
 			const arr = this.props.projectUsers[project].users;
 
@@ -57,7 +58,7 @@ class AddIssue extends Component {
 			const filteredArr = arr.map((obj) => {
 				if (obj.id === owner) {
 					var temp = Object.assign({}, obj);
-					temp.label = 'yourself';
+					temp.label = 'Yourself';
 
 					return temp;
 				} else {
@@ -65,7 +66,13 @@ class AddIssue extends Component {
 				}
 			});
 
-			return filteredArr;
+			return filteredArr.map((obj) => {
+				return (
+					<option key={obj.id} value={obj.id}>
+						{obj.label}
+					</option>
+				);
+			});
 		}
 	};
 
@@ -114,7 +121,9 @@ class AddIssue extends Component {
 						</Form.Group>
 						<Form.Group>
 							<Form.Label>Assigned To</Form.Label>
-							<Select onChange={this.handleChange} options={this.getusers()} required />
+							<Form.Control as="select" id="assignedto" name="assignedto" size="lg" required>
+								{this.getusers()}
+							</Form.Control>
 						</Form.Group>
 						<Button className="btn__submit" type="submit">
 							Create Issue
@@ -129,7 +138,7 @@ class AddIssue extends Component {
 const mapStateToProps = (state) => {
 	return {
 		auth: state.auth,
-		selectedProject: Object.values(state.selectedProject),
+		selectedProject: state.selectedProject,
 		projectUsers: state.projectUsers
 	};
 };

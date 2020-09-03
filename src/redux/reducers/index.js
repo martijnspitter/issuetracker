@@ -5,14 +5,8 @@ import projectsReducer from './projectsReducer';
 import issuesReducer from './issuesReducer';
 import selectedProjectReducer from './selectedProjectReducer';
 import projectUsersReducer from './projectUsersReducer';
-import addProjectReducer from './addProjectReducer';
+import navbarReducer from './navbarReducer';
 import selectedIssueReducer from './selectedIssueReducer';
-
-// auth = logged in user
-// projecs = all projecs the user is part of
-
-// users = all users on the same project
-// issues = all issues on the active project
 
 export const rootReducer = (state, action) => {
 	if (action.type === 'SIGN_OUT') {
@@ -30,6 +24,6 @@ const appReducer = combineReducers({
 	users: usersReducer,
 	issues: issuesReducer,
 	projectUsers: projectUsersReducer,
-	addProject: addProjectReducer,
+	navbar: navbarReducer,
 	selectedIssue: selectedIssueReducer
 });

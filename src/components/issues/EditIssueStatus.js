@@ -1,29 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Form, Button } from 'react-bootstrap';
+import history from '../../history';
+
+import { Modal, Button } from 'react-bootstrap';
 import { editIssue } from '../../redux/actions';
 
 class EditIssueStatus extends Component {
-	statusClosed = (id) => {
+	statusClosed = async (id) => {
 		const issue = this.props.issues.find((issue) => {
-			if (issue.id === id) {
-				return issue;
-			}
+			return issue.id === id;
 		});
 
 		issue.status = 'Closed';
 
-		this.props.editIssue(id, issue);
+		await this.props.editIssue(id, issue);
 
-		this.props.onHide();
+		history.push('/issuetracker/issuelist');
 	};
 
 	statusOnHold = (id) => {
 		const issue = this.props.issues.find((issue) => {
-			if (issue.id === id) {
-				return issue;
-			}
+			return issue.id === id;
 		});
 
 		issue.status = 'On Hold';
@@ -35,9 +33,7 @@ class EditIssueStatus extends Component {
 
 	statusOpen = (id) => {
 		const issue = this.props.issues.find((issue) => {
-			if (issue.id === id) {
-				return issue;
-			}
+			return issue.id === id;
 		});
 
 		issue.status = 'Open';

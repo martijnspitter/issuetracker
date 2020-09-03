@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { deleteComment, getIssues } from '../../redux/actions';
 
 import { Modal, Button } from 'react-bootstrap';
 
-import { deleteIssue, getIssues } from '../../redux/actions';
-
-class DeleteIssue extends Component {
+class DeleteComment extends Component {
 	async handleSubmit() {
-		await this.props.deleteIssue(this.props.selectedIssue.id);
-
+		await this.props.deleteComment(this.props.commentId);
+		await this.props.getIssues(this.props.selectedProject.id);
 		this.props.onHide();
 	}
 
 	render() {
-		if (!this.props.selectedIssue.id) {
+		if (!this.props.comment) {
 			return null;
 		} else {
 			return (
@@ -25,10 +24,11 @@ class DeleteIssue extends Component {
 					centered
 				>
 					<Modal.Header closeButton>
-						<Modal.Title id="contained-modal-title-vcenter">Delete Issue</Modal.Title>
+						<Modal.Title id="contained-modal-title-vcenter">Delete Comment</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						Are you sure you want to delete <strong>{this.props.selectedIssue.title}</strong>
+						<div>Are you sure you want to delete </div>
+						<strong>{this.props.comment}</strong>
 					</Modal.Body>
 
 					<Modal.Footer>
@@ -47,12 +47,8 @@ class DeleteIssue extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		selectedIssue: state.selectedIssue,
 		selectedProject: state.selectedProject
 	};
 };
 
-export default connect(mapStateToProps, {
-	deleteIssue,
-	getIssues
-})(DeleteIssue);
+export default connect(mapStateToProps, { deleteComment, getIssues })(DeleteComment);

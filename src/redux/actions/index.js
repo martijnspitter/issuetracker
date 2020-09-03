@@ -13,15 +13,9 @@ import {
 	EDIT_PROJECT,
 	FETCH_USERS,
 	FETCH_PROJECTUSERS,
-	DELETE_PROJECTUSER,
-	ADD_PROJECTUSER,
-	CLOSE_ADDPROJECT,
-	SET_ADDPROJECT,
-	EDIT_COMMENT,
-	DELETE_COMMENT,
-	CREATE_COMMENT
+	SET_NAVBAR
 } from './types';
-import history from '../../history';
+
 import axios from '../../api/axios';
 import authHeader from './authHeader';
 
@@ -43,6 +37,20 @@ export const signOut = () => {
 	return {
 		type: SIGN_OUT
 	};
+};
+
+export const disMount = () => {
+	return {
+		type: SIGN_OUT
+	};
+};
+
+export const setAuth = () => (dispatch) => {
+	const user = JSON.parse(localStorage.getItem('user'));
+	dispatch({
+		type: SIGN_IN,
+		payload: user
+	});
 };
 
 export const registerUser = (username, email, password) => async () => {
@@ -94,12 +102,19 @@ export const deleteProjectUsers = (projectId, users) => async () => {
 export const createIssue = (issue) => async (dispatch) => {
 	const response = await axios.post('/issues/create', issue, { headers: authHeader() });
 
-	// adding comments to response because render comments in Issues.js needs an empty array
+	// adding comments to response because render comments in Issues.js needs atleast an empty array
 	response.data.comments = [];
 
 	dispatch({
 		type: CREATE_ISSUE,
 		payload: response.data
+	});
+};
+
+export const removeIssues = (emptyObject) => async (dispatch) => {
+	dispatch({
+		type: FETCH_ISSUES,
+		payload: emptyObject
 	});
 };
 
@@ -131,31 +146,16 @@ export const editIssue = (id, issue) => async (dispatch) => {
 };
 
 // COMMENTS
-export const deleteComment = (id) => async (dispatch) => {
+export const deleteComment = (id) => async () => {
 	await axios.delete(`/issues/comments/delete/${id}`, { headers: authHeader() });
-
-	// dispatch({
-	// 	type: DELETE_COMMENT,
-	// 	payload: id
-	// });
 };
 
-export const editComment = (id, comment) => async (dispatch) => {
+export const editComment = (id, comment) => async () => {
 	await axios.put(`/issues/comments/update/${id}`, comment, { headers: authHeader() });
-
-	// dispatch({
-	// 	type: EDIT_COMMENT,
-	// 	payload: comment
-	// });
 };
 
-export const createComment = (comment) => async (dispatch) => {
-	const response = await axios.post('/issues/comments/create', comment, { headers: authHeader() });
-
-	// dispatch({
-	// 	type: CREATE_COMMENT,
-	// 	payload: response.data
-	// });
+export const createComment = (comment) => async () => {
+	await axios.post('/issues/comments/create', comment, { headers: authHeader() });
 };
 
 // PROJECTS
@@ -203,31 +203,25 @@ export const createProject = (project) => async (dispatch) => {
 };
 
 // SELECTED PROJECT & ISSUE
-export const selectedProject = (project) => (dispatch) => {
+export const selectProject = (project) => (dispatch) => {
 	dispatch({
 		type: SELECTED_PROJECT,
 		payload: project
 	});
 };
 
-export const selectedIssue = (issue) => (dispatch) => {
+export const selectIssue = (issue) => (dispatch) => {
 	dispatch({
 		type: SELECTED_ISSUE,
 		payload: issue
 	});
 };
 
-// ADDPROJECT
-export const setAddProject = (set) => (dispatch) => {
-	dispatch({
-		type: SET_ADDPROJECT,
-		payload: set
-	});
-};
+// NAVBAR
 
-export const closeAddProject = (set) => (dispatch) => {
+export const setNavbar = (object) => (dispatch) => {
 	dispatch({
-		type: CLOSE_ADDPROJECT,
-		payload: set
+		type: SET_NAVBAR,
+		payload: object
 	});
 };

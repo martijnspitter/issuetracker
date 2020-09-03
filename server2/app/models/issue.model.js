@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
 		status: {
 			type: Sequelize.STRING
 		},
-		project: {
+		projectId: {
 			type: Sequelize.INTEGER
 		},
 		owner: {

@@ -10,21 +10,28 @@ exports.update = (req, res) => {
 	Users.update(
 		{ username: req.body.username, email: req.body.email, password: bcrypt.hashSync(req.body.password, 8) },
 		{ where: { id: req.params.id } }
-	);
-	res.status(200).send(`User updated.`);
+	)
+		.then(() => {
+			res.status(200).send(`User updated.`);
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.everyUserName = (req, res, err) => {
+exports.everyUserName = (req, res) => {
 	Users.findAll({
 		attributes: [ [ 'id', 'id' ], [ 'username', 'username' ] ]
 	})
 		.then((result) => {
 			res.status(200).send(result);
 		})
-		.catch(err);
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.fetchProjectUsers = (req, res, err) => {
+exports.fetchProjectUsers = (req, res) => {
 	Projects.findAll({
 		where: { id: req.params.id },
 		include: [ { model: Users, attributes: [ 'id', 'username' ] } ]
@@ -32,10 +39,12 @@ exports.fetchProjectUsers = (req, res, err) => {
 		.then((result) => {
 			res.status(200).send(result);
 		})
-		.catch(err);
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.addProjectUser = (req, res, err) => {
+exports.addProjectUser = (req, res) => {
 	const body = req.body;
 	const allUsers = [];
 	body.map((users) => {
@@ -51,17 +60,25 @@ exports.addProjectUser = (req, res, err) => {
 		.then(() => {
 			res.status(200).send('Users Added');
 		})
-		.catch(err);
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.deleteProjectUser = (req, res, err) => {
+exports.deleteProjectUser = (req, res) => {
 	const body = req.body;
-	body.map((user) => {
-		user_projects.destroy({
-			where: {
-				[Op.and]: [ { userId: user.id }, { projectId: req.params.id } ]
-			}
+	body
+		.map((user) => {
+			user_projects.destroy({
+				where: {
+					[Op.and]: [ { userId: user.id }, { projectId: req.params.id } ]
+				}
+			});
+		})
+		.then(() => {
+			res.status(200).send('Users removed from project');
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
 		});
-	});
-	res.status(200).send('Users removed from project');
 };

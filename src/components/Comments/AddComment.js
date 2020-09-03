@@ -10,19 +10,20 @@ class AddComment extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
 		const body = {
 			userId: this.props.auth.userId,
-			issueId: this.props.issue[0].id
+			issueId: this.props.issue.id,
+			edit: 0
 		};
 		formData.forEach((value, property) => (body[property] = value));
 
-		this.props.createComment(body);
+		await this.props.createComment(body);
 
-		this.props.getIssues(this.props.selectedProject[0].id);
+		await this.props.getIssues(this.props.selectedProject.id);
 
 		this.props.onHide();
 	}
@@ -68,8 +69,8 @@ class AddComment extends Component {
 const mapStateToProps = (state) => {
 	return {
 		auth: state.auth,
-		issue: Object.values(state.selectedIssue),
-		selectedProject: Object.values(state.selectedProject)
+		issue: state.selectedIssue,
+		selectedProject: state.selectedProject
 	};
 };
 

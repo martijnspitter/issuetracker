@@ -10,42 +10,36 @@ class EditProject extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
 		//adding id and owner to update redux state correctly
 		const body = {
-			id: this.props.project[0].id,
-			owner: this.props.project[0].owner
+			id: this.props.project.id,
+			owner: this.props.project.owner
 		};
 		formData.forEach((value, property) => (body[property] = value));
 
-		this.props.editProject(this.props.project[0].id, body);
+		await this.props.editProject(this.props.project.id, body);
 
 		this.props.onHide();
 	}
 
 	renderProjectDetails() {
-		if (!this.props.project[0]) {
+		if (!this.props.project.id) {
 			return;
 		} else {
 			return (
 				<React.Fragment>
 					<Modal.Header closeButton>
-						<Modal.Title id="contained-modal-title-vcenter">Edit {this.props.project[0].title}</Modal.Title>
+						<Modal.Title id="contained-modal-title-vcenter">Edit {this.props.project.title}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Form onSubmit={this.handleSubmit}>
 							<Form.Group>
 								<Form.Label>Title</Form.Label>
-								<Form.Control
-									size="lg"
-									type="text"
-									id="title"
-									name="title"
-									defaultValue={this.props.project[0].title}
-								/>
+								<Form.Control size="lg" type="text" id="title" name="title" defaultValue={this.props.project.title} />
 							</Form.Group>
 							<Form.Group>
 								<Form.Label>Description</Form.Label>
@@ -56,18 +50,12 @@ class EditProject extends Component {
 									type="text"
 									id="description"
 									name="description"
-									defaultValue={this.props.project[0].description}
+									defaultValue={this.props.project.description}
 								/>
 							</Form.Group>
 							<Form.Group>
 								<Form.Label>Github link</Form.Label>
-								<Form.Control
-									size="lg"
-									type="url"
-									id="github"
-									name="github"
-									defaultValue={this.props.project[0].github}
-								/>
+								<Form.Control size="lg" type="url" id="github" name="github" defaultValue={this.props.project.github} />
 							</Form.Group>
 							<Button className="btn__submit" type="submit">
 								Edit Project
@@ -96,7 +84,7 @@ class EditProject extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		project: Object.values(state.selectedProject)
+		project: state.selectedProject
 	};
 };
 

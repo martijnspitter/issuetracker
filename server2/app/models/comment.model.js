@@ -1,6 +1,3 @@
-const db = require('../models');
-const Issues = db.issues;
-
 module.exports = (sequelize, Sequelize) => {
 	const comments = sequelize.define('comments', {
 		comment: {
@@ -8,6 +5,12 @@ module.exports = (sequelize, Sequelize) => {
 		},
 		userId: {
 			type: Sequelize.INTEGER
+		},
+		issueId: {
+			type: Sequelize.INTEGER
+		},
+		edit: {
+			type: Sequelize.BOOLEAN
 		}
 	});
 

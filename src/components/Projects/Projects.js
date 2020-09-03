@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Card, Button, Container, ListGroup, Row, Col } from 'react-bootstrap';
+import { Card, Button, Container, ListGroup, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 
 import AddProjectUsers from './AddProjectUsers';
 import DeleteProjectUsers from './DeleteProjectUsers';
 import DeleteProject from './DeleteProject';
 import EditProject from './EditProject';
+import ProjectRender from './ProjectRender';
 
-import { fetchProjects, selectedProject, fetchAllUsers, fetchProjectUsers, closeAddProject } from '../../redux/actions';
+import { fetchProjects, selectProject, fetchAllUsers, fetchProjectUsers, setNavbar } from '../../redux/actions';
+import { getName } from '../getName';
 
 class Projects extends Component {
 	constructor(props) {
@@ -34,11 +36,14 @@ class Projects extends Component {
 	}
 
 	select = async (project) => {
-		// show new issue in nav / hide new project in nav
-		this.props.closeAddProject({ id: 0, issue: true, project: false });
 		// set selected project details in redux for title in issuelist
-		this.props.selectedProject(project);
-
+		this.props.selectProject(project);
+		this.props.setNavbar({
+			addProject: false,
+			addIssue: true,
+			issueList: false,
+			title: project.title
+		});
 		// go to issuelist
 		this.props.history.push('/issuetracker/issuelist');
 	};
@@ -63,6 +68,45 @@ class Projects extends Component {
 		this.setState({ editProject: false });
 	}
 
+	renderProject() {
+		return this.props.projects.map((project) => {
+			return (
+				<ProjectRender
+					key={project.id}
+					title={project.title}
+					description={project.description}
+					github={this.props.github}
+					renderOptions={this.renderOptions(project)}
+					users={this.projectUsers(project.id, project.owner)}
+				/>
+			);
+		});
+	}
+
+	projectUsers(id, owner) {
+		return this.props.projectUsers[id].users.map((user) => {
+			if (user.id === owner) {
+				const ownerOverlay = (
+					<Popover id="popover-basic">
+						<Popover.Content>Project creator</Popover.Content>
+					</Popover>
+				);
+				return (
+					<OverlayTrigger key={user.id} placement="top" overlay={ownerOverlay}>
+						<ListGroup.Item variant="info" style={{ marginRight: '1rem' }}>
+							{getName(user.id, this.props.projectUsers[id].users, this.props.auth.userName)}
+						</ListGroup.Item>
+					</OverlayTrigger>
+				);
+			} else
+				return (
+					<ListGroup.Item key={user.id}>
+						{getName(user.id, this.props.projectUsers[id].users, this.props.auth.userName)}
+					</ListGroup.Item>
+				);
+		});
+	}
+
 	renderOptions(project) {
 		if (this.props.auth.userId === project.owner) {
 			return (
@@ -78,7 +122,7 @@ class Projects extends Component {
 								<Button
 									onClick={() => {
 										this.setState({ editProject: true });
-										this.props.selectedProject(project);
+										this.props.selectProject(project);
 									}}
 								>
 									Edit Project Details
@@ -98,7 +142,7 @@ class Projects extends Component {
 									onClick={() => {
 										this.setState({ deleteProjectUsersShow: true, projectId: project.id, projectTitle: project.title });
 										// set selected project in redux
-										this.props.selectedProject(project);
+										this.props.selectProject(project);
 									}}
 								>
 									Remove users from project
@@ -115,29 +159,6 @@ class Projects extends Component {
 							</Col>
 						</Row>
 					</Container>
-
-					<EditProject show={this.state.editProject} onHide={this.closeEditProject} />
-
-					<AddProjectUsers
-						projectId={this.state.projectId}
-						projectTitle={this.state.projectTitle}
-						show={this.state.addProjectUsersShow}
-						onHide={this.closeAddProjectUsers}
-					/>
-
-					<DeleteProjectUsers
-						projectId={this.state.projectId}
-						projectTitle={this.state.projectTitle}
-						show={this.state.deleteProjectUsersShow}
-						onHide={this.closeDeleteProjectUsers}
-					/>
-
-					<DeleteProject
-						projectId={this.state.projectId}
-						projectTitle={this.state.projectTitle}
-						show={this.state.deleteProject}
-						onHide={this.closeDeleteProject}
-					/>
 				</Card.Footer>
 			);
 		} else {
@@ -161,46 +182,34 @@ class Projects extends Component {
 		}
 	}
 
-	renderContent = () => {
-		return this.props.projects.map((project) => {
-			return (
-				<Card key={project.id} style={{ width: '100%' }}>
-					<Card.Header style={{ justifyContent: 'center' }}>
-						<strong>{project.title}</strong>
-					</Card.Header>
-					<Card.Body>
-						<div className="project__description">
-							<strong>Description: </strong>
-							<br />
-							{project.description}
-						</div>
-						<div>
-							<strong>Users connected to project: </strong>
-						</div>
-						<ListGroup horizontal>
-							{this.props.projectUsers[project.id].users.map((user) => {
-								// need to add unique key here
-								return <ListGroup.Item key={user.id}>{user.username}</ListGroup.Item>;
-							})}
-						</ListGroup>
-						<div className="project__link">
-							<strong>Github link: </strong>
-							<a href={project.github} target="_blank" rel="noopener noreferrer">
-								{project.github}
-							</a>
-						</div>
-					</Card.Body>
-					{this.renderOptions(project)}
-				</Card>
-			);
-		});
-	};
-
 	render() {
 		return (
-			<div className="test" style={{ width: '100%' }}>
-				<Container style={{ width: '100%' }}>{this.renderContent()}</Container>
-			</div>
+			<Container style={{ width: '100%' }}>
+				{this.renderProject()}
+
+				<EditProject show={this.state.editProject} onHide={this.closeEditProject} />
+
+				<AddProjectUsers
+					projectId={this.state.projectId}
+					projectTitle={this.state.projectTitle}
+					show={this.state.addProjectUsersShow}
+					onHide={this.closeAddProjectUsers}
+				/>
+
+				<DeleteProjectUsers
+					projectId={this.state.projectId}
+					projectTitle={this.state.projectTitle}
+					show={this.state.deleteProjectUsersShow}
+					onHide={this.closeDeleteProjectUsers}
+				/>
+
+				<DeleteProject
+					projectId={this.state.projectId}
+					projectTitle={this.state.projectTitle}
+					show={this.state.deleteProject}
+					onHide={this.closeDeleteProject}
+				/>
+			</Container>
 		);
 	}
 }
@@ -216,9 +225,8 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	fetchProjects,
-	selectedProject,
-
+	selectProject,
 	fetchAllUsers,
 	fetchProjectUsers,
-	closeAddProject
+	setNavbar
 })(Projects);

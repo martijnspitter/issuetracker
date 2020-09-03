@@ -10,7 +10,7 @@ class AddProject extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
@@ -19,7 +19,7 @@ class AddProject extends Component {
 		};
 		formData.forEach((value, property) => (body[property] = value));
 
-		this.props.createProject(body);
+		await this.props.createProject(body);
 
 		this.props.onHide();
 	}

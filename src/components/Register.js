@@ -8,6 +8,9 @@ import { isEmail } from 'validator';
 
 import { registerUser } from '../redux/actions';
 
+import { Card, Container } from 'react-bootstrap';
+import avatar from '../images/avatar.jpg';
+
 const required = (value) => {
 	if (!value) {
 		return (
@@ -116,10 +119,9 @@ class Register extends Component {
 
 	render() {
 		return (
-			<div className="col-md-12">
-				<div className="card card-container">
-					<img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" alt="profile-img" className="profile-img-card" />
-
+			<Container style={{ display: 'flex', justifyContent: 'center' }}>
+				<Card style={{ width: '30%' }}>
+					<Card.Img src={avatar} alt="profile-img" />
 					<Form
 						onSubmit={this.handleRegister}
 						ref={(c) => {
@@ -143,7 +145,7 @@ class Register extends Component {
 								<div className="form-group">
 									<label htmlFor="email">Email</label>
 									<Input
-										type="text"
+										type="email"
 										className="form-control"
 										name="email"
 										value={this.state.email}
@@ -184,8 +186,8 @@ class Register extends Component {
 							}}
 						/>
 					</Form>
-				</div>
-			</div>
+				</Card>
+			</Container>
 		);
 	}
 }

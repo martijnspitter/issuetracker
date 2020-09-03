@@ -13,29 +13,27 @@ class EditIssue extends Component {
 		this.getUsers = this.getUsers.bind(this);
 
 		this.state = {
-			selectedOption: null
+			selectedOption: undefined
 		};
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = new FormData(e.target);
-		const id = this.props.issue[0].id;
-		const body = this.props.issue[0];
-		body.assignedto = this.state.selectedOption.id;
+		const id = this.props.issue.id;
+		const body = this.props.issue;
+		body.assignedto = !this.state.selectedOption ? this.props.issue.assignedto : this.state.selectedOption.id;
 
 		formData.forEach((value, property) => (body[property] = value));
 
-		this.props.editIssue(id, body);
+		await this.props.editIssue(id, body);
 
 		this.props.onHide();
 	}
 
 	getUsers = () => {
-		if (!this.props.issue[0]) {
-			return {};
-		} else {
-			const project = this.props.issue[0].project;
+		if (this.props.issue.id) {
+			const project = this.props.issue.projectId;
 
 			const arr = this.props.projectUsers[project].users;
 
@@ -43,7 +41,7 @@ class EditIssue extends Component {
 
 			// remove assignedto from project users.
 			const filteredArr = arr.filter((obj) => {
-				if (obj.id === this.props.issue[0].assignedto) {
+				if (obj.id === this.props.issue.assignedto) {
 					return false;
 				} else {
 					return true;
@@ -78,19 +76,19 @@ class EditIssue extends Component {
 	}
 
 	renderProjectDetails() {
-		if (!this.props.issue[0]) {
+		if (!this.props.issue) {
 			return;
 		} else {
 			return (
 				<React.Fragment>
 					<Modal.Header closeButton>
-						<Modal.Title id="contained-modal-title-vcenter">Edit {this.props.issue[0].title}</Modal.Title>
+						<Modal.Title id="contained-modal-title-vcenter">Edit {this.props.issue.title}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Form onSubmit={this.handleSubmit}>
 							<Form.Group>
 								<Form.Label>Title</Form.Label>
-								<Form.Control size="lg" type="text" id="title" name="title" defaultValue={this.props.issue[0].title} />
+								<Form.Control size="lg" type="text" id="title" name="title" defaultValue={this.props.issue.title} />
 							</Form.Group>
 							<Form.Group>
 								<Form.Label>Description</Form.Label>
@@ -101,12 +99,12 @@ class EditIssue extends Component {
 									type="text"
 									id="description"
 									name="description"
-									defaultValue={this.props.issue[0].description}
+									defaultValue={this.props.issue.description}
 								/>
 							</Form.Group>
 
 							<Form.Group>
-								<Form.Label>Reassign Issue to</Form.Label>
+								<Form.Label>You can reassign the Issue to:</Form.Label>
 								<Select onChange={this.handleChange} options={this.getUsers()} />
 							</Form.Group>
 							<Button className="btn__submit" type="submit">
@@ -136,7 +134,7 @@ class EditIssue extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		issue: Object.values(state.selectedIssue),
+		issue: state.selectedIssue,
 		projectUsers: state.projectUsers,
 		auth: state.auth
 	};

@@ -21,9 +21,9 @@ db.sequelize = sequelize;
 
 db.users = require('../models/user.model.js')(sequelize, Sequelize);
 db.role = require('../models/role.model.js')(sequelize, Sequelize);
-db.projects = require('../models/project.model')(sequelize, Sequelize);
-db.issues = require('../models/issue.model')(sequelize, Sequelize);
-db.user_projects = require('../models/userprojects.model')(sequelize, Sequelize);
+db.projects = require('../models/project.model.js')(sequelize, Sequelize);
+db.issues = require('../models/issue.model.js')(sequelize, Sequelize);
+db.user_projects = require('../models/userprojects.model.js')(sequelize, Sequelize);
 db.comments = require('../models/comment.model.js')(sequelize, Sequelize);
 
 db.role.belongsToMany(db.users, {
@@ -50,11 +50,23 @@ db.projects.belongsToMany(db.users, {
 });
 
 db.comments.belongsTo(db.issues, {
-	foreignKey: 'issueId'
+	foreignKey: 'issueId',
+	onDelete: 'CASCADE'
 });
 
 db.issues.hasMany(db.comments, {
-	foreignKey: 'issueId'
+	foreignKey: 'issueId',
+	onDelete: 'CASCADE'
+});
+
+db.issues.belongsTo(db.projects, {
+	foreignKey: 'projectId',
+	onDelete: 'CASCADE'
+});
+
+db.projects.hasMany(db.issues, {
+	foreignKey: 'projectId',
+	onDelete: 'CASCADE'
 });
 
 db.ROLES = [ 'user', 'admin' ];

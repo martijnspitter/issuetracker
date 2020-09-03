@@ -2,6 +2,7 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const Users = db.users;
 const Role = db.role;
+const user_projects = db.user_projects;
 
 const Op = db.Sequelize.Op;
 
@@ -34,6 +35,11 @@ exports.signup = (req, res) => {
 					res.send({ message: 'User was registered successfully!' });
 				});
 			}
+
+			user_projects.create({
+				userId: user.id,
+				projectId: 1
+			});
 		})
 		.catch((err) => {
 			res.status(500).send({ message: err.message });

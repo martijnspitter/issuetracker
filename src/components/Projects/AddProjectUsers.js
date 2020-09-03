@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Form, Button, FormGroup } from 'react-bootstrap';
+import { Modal, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 
 import { addProjectUsers } from '../../redux/actions';
@@ -17,11 +17,11 @@ class AddProjectUsers extends Component {
 		};
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 		const formData = this.state.selectedOption;
 
-		this.props.addProjectUsers(this.props.projectId, formData);
+		await this.props.addProjectUsers(this.props.projectId, formData);
 
 		this.props.onHide(this.props.projectId);
 	}

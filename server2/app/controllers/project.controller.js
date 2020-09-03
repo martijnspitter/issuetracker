@@ -6,15 +6,17 @@ const Comments = db.comments;
 const Issues = db.issues;
 const Users = db.users;
 
-exports.delete = (req, res, err) => {
+exports.delete = (req, res) => {
 	Projects.destroy({ where: { id: req.params.id } })
 		.then(() => {
 			res.status(200).send(`Project deleted.`);
 		})
-		.catch(err);
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.projects = async (req, res, err) => {
+exports.projects = async (req, res) => {
 	Projects.findAll({
 		include: [
 			{
@@ -23,27 +25,35 @@ exports.projects = async (req, res, err) => {
 					id: req.params.id
 				},
 				attributes: [ [ 'id', 'id' ], [ 'username', 'username' ] ]
+			},
+			{
+				model: Issues,
+
+				attributes: [ [ 'id', 'id' ] ]
 			}
 		]
 	})
 		.then((result) => {
 			res.status(200).send(result);
 		})
-		.catch(err);
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
-exports.projectsIssues = (req, res, err) => {
+exports.projectsIssues = (req, res) => {
 	Issues.findAll({
 		where: {
-			project: req.params.project
+			projectId: req.params.project
 		},
 		include: [ { model: Comments } ]
 	})
 		.then((result) => {
-			console.log(result);
 			res.status(200).send(result);
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };
 
 exports.create = (req, res) => {
@@ -52,23 +62,32 @@ exports.create = (req, res) => {
 		description: req.body.description,
 		github: req.body.github,
 		owner: req.body.owner
-	}).then((result) => {
-		user_projects.create({
-			userId: req.body.owner,
-			projectId: result.dataValues.id
+	})
+		.then((result) => {
+			user_projects.create({
+				userId: req.body.owner,
+				projectId: result.dataValues.id
+			});
+			res.status(200).send(result);
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
 		});
-		res.status(200).send(result);
-	});
 };
 
 exports.update = (req, res) => {
 	Projects.update(
 		{
 			title: req.body.title,
-			desciption: req.body.desciption,
+			description: req.body.description,
 			github: req.body.github
 		},
 		{ where: { id: req.params.id } }
-	);
-	res.status(200).send(`Project Updated.`);
+	)
+		.then(() => {
+			res.status(200).send(`Project Updated.`);
+		})
+		.catch((err) => {
+			res.status(500).send({ message: err.message });
+		});
 };

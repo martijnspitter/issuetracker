@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Form, Button, FormGroup } from 'react-bootstrap';
+import { Modal, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 
 import { deleteProjectUsers } from '../../redux/actions';
@@ -21,26 +21,26 @@ class DeleteProjectUsers extends Component {
 		e.preventDefault();
 		const formData = this.state.selectedOption;
 
-		if (!this.props.selectedProject[0]) {
+		if (!this.props.selectedProject) {
 			return;
 		} else {
-			this.props.deleteProjectUsers(this.props.selectedProject[0].id, formData);
+			this.props.deleteProjectUsers(this.props.selectedProject.id, formData);
 
 			this.props.onHide(this.props.projectId);
 		}
 	}
 
 	getusers = () => {
-		if (!this.props.selectedProject[0]) {
+		if (!this.props.selectedProject.id) {
 			return {};
 		} else {
-			const project = this.props.selectedProject[0].id;
+			const project = this.props.selectedProject.id;
 
 			const arr = this.props.projectUsers[project].users;
 
 			// remove owner from project users.
 			const filteredArr = arr.filter((obj) => {
-				if (obj.id === this.props.selectedProject[0].owner) {
+				if (obj.id === this.props.selectedProject.owner) {
 					return false;
 				} else {
 					return true;
@@ -72,7 +72,7 @@ class DeleteProjectUsers extends Component {
 				centered
 			>
 				<Modal.Header closeButton>
-					<Modal.Title id="contained-modal-title-vcenter">Delete Users from {this.props.projectTitle}</Modal.Title>
+					<Modal.Title id="contained-modal-title-vcenter">Remove Users from {this.props.projectTitle}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form onSubmit={this.handleSubmit}>
@@ -80,7 +80,7 @@ class DeleteProjectUsers extends Component {
 							<Form.Label>Select Users</Form.Label>
 							<Select onChange={this.handleChange} options={this.getusers()} isMulti className="ownform_control" />
 						</Form.Group>
-						<Button type="submit">Delete</Button>
+						<Button type="submit">Remove</Button>
 					</Form>
 				</Modal.Body>
 			</Modal>
@@ -91,7 +91,7 @@ class DeleteProjectUsers extends Component {
 const mapStateToProps = (state) => {
 	return {
 		projectUsers: state.projectUsers,
-		selectedProject: Object.values(state.selectedProject)
+		selectedProject: state.selectedProject
 	};
 };
 

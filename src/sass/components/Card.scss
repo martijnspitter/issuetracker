@@ -43,6 +43,18 @@
 
 	&__details {
 		font-size: 1.2rem;
+
+		padding-bottom: 1rem;
+		justify-content: flex-end;
+	}
+
+	&__edited {
+		display: flex;
+		display: flex;
+		font-size: 1.2rem;
+
+		padding-bottom: 0rem;
+		justify-content: flex-end;
 	}
 }
 
@@ -97,6 +109,11 @@
 	justify-content: flex-end;
 }
 
+.left {
+	display: flex;
+	justify-content: flex-start;
+}
+
 .modal-body {
 	padding: 2rem !important;
 }
@@ -108,4 +125,41 @@
 .col {
 	display: flex;
 	justify-content: center;
+	align-items: center;
+}
+
+#popover-basic {
+	font-size: 1.4rem !important;
+}
+
+.issue {
+	&__link {
+		color: #212529;
+		&:hover {
+			color: #007bff;
+			text-decoration: none;
+		}
+	}
+}
+
+.Comments {
+	margin-top: 0;
+
+	&__row:first-child {
+		padding-top: 4rem;
+		border-top: 1px solid lightgray;
+	}
+}
+
+h2 {
+	margin-bottom: 2rem !important;
+	margin-top: 5rem !important;
+}
+
+#nmt {
+	margin-top: 0 !important;
+}
+
+p {
+	margin-bottom: 2rem !important;
 }

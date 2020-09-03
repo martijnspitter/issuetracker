@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 
 import { Modal, Button } from 'react-bootstrap';
 
-import { deleteProject } from '../../redux/actions';
+import { deleteProject, selectProject, deleteIssue } from '../../redux/actions';
 
 class DeleteProject extends Component {
-	handleSubmit() {
-		this.props.deleteProject(this.props.projectId);
+	async handleSubmit() {
+		await this.props.deleteProject(this.props.projectId);
+		await this.props.selectProject({});
 		this.props.onHide();
 	}
 
@@ -27,11 +28,11 @@ class DeleteProject extends Component {
 					Are you sure you want to delete <strong>{this.props.projectTitle}</strong>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="success" onClick={this.props.onHide}>
-						NO
-					</Button>
 					<Button variant="danger" onClick={() => this.handleSubmit()}>
 						DELETE
+					</Button>
+					<Button variant="success" onClick={this.props.onHide}>
+						NO
 					</Button>
 				</Modal.Footer>
 			</Modal>
@@ -39,6 +40,14 @@ class DeleteProject extends Component {
 	}
 }
 
-export default connect(null, {
-	deleteProject
+const mapStateToProps = (state) => {
+	return {
+		issues: Object.values(state.issues)
+	};
+};
+
+export default connect(mapStateToProps, {
+	deleteProject,
+	selectProject,
+	deleteIssue
 })(DeleteProject);

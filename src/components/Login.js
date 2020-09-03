@@ -7,6 +7,9 @@ import CheckButton from 'react-validation/build/button';
 import { signIn } from '../redux/actions/index.js';
 import { connect } from 'react-redux';
 
+import { Card, Container } from 'react-bootstrap';
+import avatar from '../images/avatar.jpg';
+
 const required = (value) => {
 	if (!value) {
 		return (
@@ -79,9 +82,9 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div className="col-md-12">
-				<div className="card card-container">
-					<img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" alt="profile-img" className="profile-img-card" />
+			<Container style={{ display: 'flex', justifyContent: 'center' }}>
+				<Card style={{ width: '30%' }}>
+					<Card.Img src={avatar} alt="profile-img" />
 
 					<Form
 						onSubmit={this.handleLogin}
@@ -134,8 +137,8 @@ class Login extends Component {
 							}}
 						/>
 					</Form>
-				</div>
-			</div>
+				</Card>
+			</Container>
 		);
 	}
 }
